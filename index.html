@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tweet2md - Convert a tweet to Markdown</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"
+  />
+  <style>
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+    }
+    input,
+    textarea {
+      width: 98%;
+    }
+    textarea {
+      font-family: monospace;
+    }
+    #example {
+      cursor: pointer;
+    }
+  </style>
+  <script
+    async
+    src="https://platform.twitter.com/widgets.js"
+    charset="utf-8"
+  ></script>
+  <h1>tweet2md</h1>
+  <p>Convert a tweet to Markdown</p>
+  <form id="the-form">
+    <label for="url">Tweet URL</label>
+    <input
+      placeholder="https://"
+      name="tweet-url"
+      id="url"
+      type="url"
+      required
+      onclick="this.focus();this.select();"
+    />
+    <p>
+      <small>
+        E.g.:
+        <span id="example"
+          >https://twitter.com/cheeaun/status/1406253150667902979</span
+        >
+      </small>
+    </p>
+  </form>
+  <div id="result" hidden>
+    <h2>Markdown</h2>
+    <textarea
+      rows="10"
+      id="textarea"
+      readonly
+      onclick="this.focus();this.select();document.execCommand('copy')"
+    ></textarea>
+    <h2>Markdown Preview</h2>
+    <div id="preview"></div>
+    <h2>Tweet Embed</h2>
+    <div id="embed"></div>
+  </div>
+  <script>
+    const $result = document.getElementById('result');
+    const $url = document.getElementById('url');
+    const $textarea = document.getElementById('textarea');
+    const $preview = document.getElementById('preview');
+    const $embed = document.getElementById('embed');
+    const $form = document.getElementById('the-form');
+    $form.onsubmit = (e) => {
+      if (e) e.preventDefault();
+      fetch(`/api/tweet2md?url=${encodeURIComponent($url.value)}`)
+        .then((d) => d.json())
+        .then((d) => {
+          $result.hidden = false;
+          $textarea.value = d.markdown;
+          $preview.innerHTML = d.html;
+          $embed.innerHTML = d.rawHTML;
+          twttr.widgets.load();
+        });
+    };
+    const $example = document.getElementById('example');
+    $example.onclick = () => {
+      $url.value = $example.innerHTML;
+      $form.onsubmit();
+    };
+  </script>
+</html>

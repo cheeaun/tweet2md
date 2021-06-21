@@ -1,0 +1,11 @@
+{
+  "name": "tweet2md",
+  "version": "1.0.0",
+  "description": "Convert a tweet to Markdown",
+  "author": "Lim Chee Aun <cheeaun@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "marked": "^2.1.1",
+    "turndown": "~7.0.0"
+  }
+}
